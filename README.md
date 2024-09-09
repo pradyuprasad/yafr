@@ -24,8 +24,8 @@ YAFR (Yet Another FRED Client) is a robust Python library for interacting with t
 
 | Feature Name | Status  |
 |--------------|---------|
-| Basic API Client   | In Progress  |
-| Series    | Planned|
+| Basic API Client   | Completed  |
+| Series    | In Progress|
 | Categories | Planned|
 | Releases | Planned|
 | Sources | Planned|
