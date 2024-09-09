@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 from ._exceptions import (
     BadRequestError,
+    FredAPIError,
     InternalServerError,
     LockedError,
     NotFoundError,
@@ -65,3 +66,13 @@ class FredClient:
             raise InternalServerError(error_message)
         else:
             raise UnhandledAPIError(f"Unhandled error: {status_code} - {error_message}")
+
+    def _test_api_key(self) -> None:
+        """Test the API key by calling the FRED API."""
+        try:
+            self.call_api("series/observations", series_id="GDP")
+        except BadRequestError:
+            return False
+        except FredAPIError as e:
+            raise e
+        return True
