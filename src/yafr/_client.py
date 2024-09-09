@@ -24,6 +24,13 @@ class FredClient:
 
         self.base_url = "https://api.stlouisfed.org/fred"
 
+        try:
+            works = self._test_api_key()
+        except FredAPIError as e:
+            raise e
+        if not works:
+            raise ValueError("Invalid API key")
+
     def call_api(self, endpoint: str, **kwargs) -> Dict[str, Any]:
         """Make the API request and handle potential errors."""
         params = kwargs.get("params", {})
@@ -54,6 +61,8 @@ class FredClient:
             # If the response is not JSON (might be XML), fall back to text
             error_message = response.text or "Unknown error"
 
+        print(f"Error: {status_code} - {error_message}")
+
         if status_code == 400:
             raise BadRequestError(error_message)
         elif status_code == 404:
@@ -70,7 +79,7 @@ class FredClient:
     def _test_api_key(self) -> bool:
         """Test the API key by calling the FRED API."""
         try:
-            self.call_api("series/observations", series_id="GDP")
+            self.call_api("category", category_id="125")
         except BadRequestError:
             return False
         except FredAPIError as e:
