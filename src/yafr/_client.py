@@ -67,7 +67,7 @@ class FredClient:
         else:
             raise UnhandledAPIError(f"Unhandled error: {status_code} - {error_message}")
 
-    def _test_api_key(self) -> None:
+    def _test_api_key(self) -> bool:
         """Test the API key by calling the FRED API."""
         try:
             self.call_api("series/observations", series_id="GDP")
