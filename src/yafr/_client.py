@@ -11,6 +11,7 @@ from ._exceptions import (
     TooManyRequestsError,
     UnhandledAPIError,
 )
+from src.yafr.models import Series
 
 
 class FredClient:
@@ -33,7 +34,7 @@ class FredClient:
 
     def call_api(self, endpoint: str, **kwargs) -> Dict[str, Any]:
         """Make the API request and handle potential errors."""
-        params = kwargs.get("params", {})
+        params = kwargs
         params["api_key"] = self.api_key
         params["file_type"] = "json"
 
@@ -85,3 +86,29 @@ class FredClient:
         except FredAPIError as e:
             raise e
         return True
+
+    def get_series(self, series_id: str, **kwargs) -> Series:
+        """
+        Retrieve detailed information about a series.
+
+        Args:
+            series_id (str): The ID of the series.
+            **kwargs: Additional keyword arguments to be passed to the API.
+
+        Returns:
+            Series: The series information.
+
+        Raises:
+            pydantic.ValidationError: If the response is invalid.
+            FredAPIError: If the API returns an error.
+
+        """
+        output: Dict[str, Any] = self.call_api(
+            endpoint="series", series_id=series_id, **kwargs
+        )
+        series_information = {
+            **output["seriess"][0],
+            "fred_id": output["seriess"][0]["id"],
+        }
+        del series_information["id"]
+        return Series(**series_information)
