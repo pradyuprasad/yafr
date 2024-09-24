@@ -2,6 +2,8 @@ import requests
 from typing import Dict, Any
 from dotenv import load_dotenv
 import os
+
+from yafr.models._validate import validate_series
 from ._exceptions import (
     BadRequestError,
     FredAPIError,
@@ -106,9 +108,4 @@ class FredClient:
         output: Dict[str, Any] = self.call_api(
             endpoint="series", series_id=series_id, **kwargs
         )
-        series_information = {
-            **output["seriess"][0],
-            "fred_id": output["seriess"][0]["id"],
-        }
-        del series_information["id"]
-        return Series(**series_information)
+        return validate_series(output["seriess"][0])
